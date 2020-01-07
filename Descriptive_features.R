@@ -61,3 +61,20 @@ dim(h1b)
 h1b[1:10,]
 h1b[strand(h1b)=="+",]
 class(h1b[strand(h1b)=="+",])
+
+
+txdb<- transcriptsBy(TxDb.Hsapiens.UCSC.hg19.knownGene ,
+                     "gene")
+str(txdb)
+class(txdb)
+txdb
+exonsdb<- transcriptsBy(TxDb.Hsapiens.UCSC.hg19.knownGene ,
+                        "exon")
+
+
+hits <-  countOverlaps(h1b, txdb)
+ol <- countOverlaps( txdb , h1b[hits==1])
+
+class(ol)
+ol
+table(ol)
