@@ -30,6 +30,15 @@ if (!require("GenomicAlignments")) {
 if (!require("TxDb.Hsapiens.UCSC.hg19.knownGene")) {
   BiocManager::install("TxDb.Hsapiens.UCSC.hg19.knownGene")
   library(TxDb.Hsapiens.UCSC.hg19.knownGene)}
+if (!require("SNPlocs.Hsapiens.dbSNP.20120608")) {
+  BiocManager::install("SNPlocs.Hsapiens.dbSNP.20120608")
+  library(SNPlocs.Hsapiens.dbSNP.20120608)}
+if (!require("BSgenome")) {
+  BiocManager::install("BSgenome")
+  library(BSgenome)}
+if (!require("BSgenome.Hsapiens.UCSC.hg19")) {
+  BiocManager::install("BSgenome.Hsapiens.UCSC.hg19")
+  library(BSgenome.Hsapiens.UCSC.hg19)}
 
 ################################################
 ######  Exercises           ####################
@@ -78,3 +87,10 @@ ol <- countOverlaps( txdb , h1b[hits==1])
 class(ol)
 ol
 table(ol)
+
+# Representing SNPs on R
+                                        # The SNPlocs.Hsapiens.dbSNP.20120608 package is deprecated. Please use a SNPlocs data package based on a more recent dbSNP BUILD instead (e.g. BUILD 144 or BUILD 149). You can call BSgenome::available.SNPs()
+
+genome <-  injectSNPs( BSgenome.Hsapiens.UCSC.hg19 , "SNPlocs.Hsapiens.dbSNP.20120608")
+seqnames(genome)
+
