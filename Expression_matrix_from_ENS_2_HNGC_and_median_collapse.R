@@ -63,7 +63,7 @@ path2save <- args$outputfile
 #  path2save <- "/media/rmejia/mountme88/Projects/Phosoholipidosis/RNAseq/Expression_Matrix_from_Emmi/lipidosis_RNA_16_STAR_fC_edgeR_matrix_2021_04_23_HNGC_collapsed_by_median.tsv"
 
 ensemblids_version <- rownames( inputmatrix )
-# ensemblids_noversion <- sub( '\\.[0-9]*$', '', ensemblids_version )
+ensemblids_noversion <- sub( '\\.[0-9]*$', '', ensemblids_version )
 
 # getting the map between ESN (ensembl) and HGNC
 table_HGNCids <- gprofiler2::gconvert( ensemblids_noversion , organism = "hsapiens", target="HGNC" )
@@ -73,7 +73,6 @@ table_HGNCids <- gprofiler2::gconvert( ensemblids_noversion , organism = "hsapie
 duplicatedinputids <- table_HGNCids$input[ duplicated( table_HGNCids$input ) ]
 duplicatedinputids_positions <- which(table_HGNCids$input %in% duplicatedinputids)
 inputids_that_map_to_more_than_1_HGNC <- table_HGNCids[ duplicatedinputids_positions , ]
-table(inputids_that_map_to_more_than_1_HGNC <- table_HGNCids[ duplicatedinputids_positions , ]$input)
 
 # save this table besides the results
 
@@ -81,7 +80,6 @@ table(inputids_that_map_to_more_than_1_HGNC <- table_HGNCids[ duplicatedinputids
 duplicatedHGNCsids <- table_HGNCids$name[ duplicated( table_HGNCids$name ) ]
 duplicatedHGNCs_positions <- which(table_HGNCids$name %in% duplicatedHGNCsids)
 table_of_duplicated_HGNCs <- table_HGNCids[duplicatedHGNCs_positions, ]
-table(table_of_duplicated_HGNCs <- table_HGNCids[duplicatedHGNCs_positions, ]$name)
 # The distribution of your duplicates = table(duplicatedHGNCsids)
 
 ######
@@ -101,9 +99,9 @@ colnames(converted_ids_uncollapsed_table)[ 3:dim(converted_ids_uncollapsed_table
 ### Maybe using Parallel https://nceas.github.io/oss-lessons/parallel-computing-in-r/parallel-computing-in-r.html
 ### https://www.r-bloggers.com/2018/09/simple-parallel-processing-in-r/
 for( w in 1:dim( converted_ids_uncollapsed_table )[1] ){
-  +     position_ENSG_in_inputmat <- grep( converted_ids_uncollapsed_table[w,"input"] , rownames(inputmatrix) )
-  +     converted_ids_uncollapsed_table[w , 3:dim(converted_ids_uncollapsed_table)[2] ]   <- inputmatrix[ position_ENSG_in_inputmat, ]
-  +   }  
+       position_ENSG_in_inputmat <- grep( converted_ids_uncollapsed_table[w,"input"] , rownames(inputmatrix) )
+       converted_ids_uncollapsed_table[w , 3:dim(converted_ids_uncollapsed_table)[2] ]   <- inputmatrix[ position_ENSG_in_inputmat, ]
+     }  
 # this can take a long... ~ 1 hr in the server but it was successful
 
 #values_perid <- function(x){
@@ -119,10 +117,10 @@ for( w in 1:dim( converted_ids_uncollapsed_table )[1] ){
 #######
 Collapsed_by_median_dplyr <- converted_ids_uncollapsed_table_read_readed %>%
   group_by(target)%>% 
-  summarise(MLipChl1=median(LipChl1), MLipChl2=median(LipChl2), MLipChl3=median(LipChl3), MLipChl4=median(LipChl4),
-            MLipCon1=median(LipCon1), MLipCon2=median(LipCon2), MLipCon3=median(LipCon3), MLipCon4=median(LipCon4),
-            MNorChl1=median(NorChl1), MNorChl2=median(NorChl2), MNorChl3=median(NorChl3), MNorChl4=median(NorChl4),
-            MNorCon1=median(NorChl1), MNorCon2=median(NorChl2), MNorCon3=median(NorChl3), MNorCon4=median(NorChl4)
+  summarise(LipChl1=median(LipChl1), LipChl2=median(LipChl2), LipChl3=median(LipChl3), LipChl4=median(LipChl4),
+            LipCon1=median(LipCon1), LipCon2=median(LipCon2), LipCon3=median(LipCon3), LipCon4=median(LipCon4),
+            NorChl1=median(NorChl1), NorChl2=median(NorChl2), NorChl3=median(NorChl3), NorChl4=median(NorChl4),
+            NorCon1=median(NorChl1), NorCon2=median(NorChl2), NorCon3=median(NorChl3), NorCon4=median(NorChl4)
             )
 
 Collapsed_by_median_dplyr_4_results <- as.data.frame( Collapsed_by_median_dplyr)
@@ -134,6 +132,6 @@ Collapsed_by_median_dplyr_4_results <- Collapsed_by_median_dplyr_4_results[,-gre
 ###########################
 #   Saving the results  ###
 ###########################
-write.table( Collapsed_by_median_dplyr_df, file = path2save , row.names = FALSE, sep="\t" )
+write.table( Collapsed_by_median_dplyr_4_results, file = path2save , row.names = TRUE, sep="\t" )
 
 
